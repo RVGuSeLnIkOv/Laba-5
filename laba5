@@ -1,0 +1,447 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace задание
+{
+    class Program
+    {
+        #region Общие функции
+        static void PrintMainMenu()
+        {
+            Console.WriteLine();
+            Console.WriteLine("1. Работа с одномерными массивами");
+            Console.WriteLine("2. Работа с двумерными массивами");
+            Console.WriteLine("3. Работа с рваными массивами");
+            Console.WriteLine("4. Выход");
+            Console.WriteLine();
+        }
+        static void PrintMenuForMakeArray()
+        {
+            Console.WriteLine();
+            Console.WriteLine("1. Создать вручную");
+            Console.WriteLine("2. Создать с помощью ДСЧ");
+            Console.WriteLine("3. Назад");
+            Console.WriteLine();
+        }
+        static int GetInt(string msg, int min, int max)
+        {
+            int number;
+            bool isRead;
+            do
+            {
+                Console.Write(msg);
+                isRead = int.TryParse(Console.ReadLine(), out number);
+                if (!isRead)
+                {
+                    Console.WriteLine("[Ошибка!] Целое число введено неверно");
+                    Console.WriteLine();
+                }
+
+                else
+                {
+                    if (number < min || number > max)
+                    {
+                        Console.WriteLine("[Ошибка!] Число не попадает в заданный диапазон");
+                        Console.WriteLine();
+                        isRead = false;
+                    }
+                }
+            } while (!isRead);
+            return number;
+        }
+        #endregion
+
+        #region Одномерные массивы
+        static void PrintMenuForArray()
+        {
+            Console.WriteLine();
+            Console.WriteLine("1. Создать массив");
+            Console.WriteLine("2. Напечатать массив");
+            Console.WriteLine("3. Удалить элемент с заданным номером");
+            Console.WriteLine("4. Назад");
+            Console.WriteLine();
+        }
+        static int[] MakeArrayConsole(int sizeOfArray)
+        {
+            int[] array = new int[sizeOfArray];
+            int i;
+            for (i = 0; i < sizeOfArray; i++)
+            {
+                array[i] = GetInt("Введите " + (i + 1) + "-й элемент массива: ", Int32.MinValue, Int32.MaxValue);
+            }
+            Console.WriteLine("Массив успешно создан");
+            return array;
+        }
+        static int[] MakeArrayRandom(int sizeOfArray)
+        {
+            int[] array = new int[sizeOfArray];
+            Random rand = new Random();
+            int i;
+            for (i = 0; i < sizeOfArray; i++)
+            {
+                array[i] = rand.Next(-100, 100);
+            }
+            Console.WriteLine("Массив успешно создан");
+            return array;
+        }
+        static bool IsEmpty(int[] array)
+        {
+            if (array == null || array.Length == 0) return true;
+            else return false;
+        }
+        static void PrintArray(int[] array)
+        {
+            bool isEmpty = IsEmpty(array);
+            int i;
+            if (isEmpty) Console.WriteLine("Массив пустой!");
+            else
+            {
+                Console.WriteLine("Получен массив: ");
+                for (i = 0; i < array.Length; i++)
+                {
+                    Console.Write(array[i] + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+        static int[] DeleteElement(int[] array, int numOfDelElement, int sizeOfArray)
+        {
+            int[] arrayAfterDelete = new int[array.Length - 1];
+            bool isEmpty = IsEmpty(array);
+            if (isEmpty) Console.WriteLine("Массив пустой!");
+            else
+            {
+                try
+                {
+                    Array.Copy(array, 0, arrayAfterDelete, 0, numOfDelElement);
+                    Array.Copy(array, numOfDelElement + 1, arrayAfterDelete, numOfDelElement, array.Length - numOfDelElement - 1);
+                    Console.WriteLine($"Элемент под номером {numOfDelElement + 1} успешно удален");
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("Элемента с таким номером нет");
+                }
+                array = arrayAfterDelete;
+            }
+            return array;
+        }
+        static void DoMenuForArray()
+        {
+            int check;
+            int sizeOfArray = 0;
+            int[] array = null;
+            int numOfDelElement;
+            do
+            {
+                PrintMenuForArray();
+                check = GetInt("", 1, 4);
+                switch (check)
+                {
+                    case 1:
+                        {
+                            sizeOfArray = GetInt("Введите количество элементов массива: ", 0, 100);
+                            if (sizeOfArray == 0) Console.WriteLine("Массив пустой!");
+                            else
+                            {
+                                PrintMenuForMakeArray();
+                                check = GetInt("", 1, 4);
+                                switch (check)
+                                {
+                                    case 1: array = MakeArrayConsole(sizeOfArray); break;
+                                    case 2: array = MakeArrayRandom(sizeOfArray); break;
+                                    case 3: break;
+                                }
+                            }
+                            break;
+                        }
+                    case 2: PrintArray(array); break;
+                    case 3:
+                        {
+                            bool isEmpty = IsEmpty(array);
+                            if (isEmpty) Console.WriteLine("Массив пустой!");
+                            else
+                            {
+                                numOfDelElement = GetInt("Введите номер элемента, который нужно удалить: ", 1, sizeOfArray);
+                                array = DeleteElement(array, numOfDelElement - 1, sizeOfArray);
+                            }
+                            break;
+                        }
+                }
+            } while (check < 4);
+
+        }
+        #endregion
+
+        #region Двумерные массивы
+        static void PrintMenuForTable()
+        {
+            Console.WriteLine();
+            Console.WriteLine("1. Создать матрицу");
+            Console.WriteLine("2. Напечатать матрицу");
+            Console.WriteLine("3. Добавить строку в начало матрицы");
+            Console.WriteLine("4. Назад");
+            Console.WriteLine();
+        }
+        static int[,] MakeTableConsole(int strings, int columns)
+        {
+            int[,] table = new int[strings, columns];
+            int i, j;
+            for (i = 0; i < strings; i++)
+            {
+                for (j = 0; j < columns; j++)
+                {
+                    table[i, j] = GetInt("Введите элемент матрицы с индексом [" + (i + 1) + "," + (j + 1) + "]: ", Int32.MinValue, Int32.MaxValue);
+                }
+            }
+            Console.WriteLine("Матрица успешно создана");
+            return table;
+        }
+        static int[,] MakeTableRandom(int strings, int columns)
+        {
+            Random rnd = new Random();
+            int[,] table = new int[strings, columns];
+            int i, j;
+            for (i = 0; i < strings; i++)
+            {
+                for (j = 0; j < columns; j++)
+                {
+                    table[i, j] = rnd.Next(-100, 100);
+                }
+            }
+            Console.WriteLine("Матрица успешно создана");
+            return table;
+        }
+        static bool IsEmpty(int[,] table)
+        {
+            if (table == null || table.Length == 0) return true;
+            else return false;
+        }
+        static void PrintTable(int[,] table, int strings, int columns)
+        {
+            bool isEmpty = IsEmpty(table);
+            int i, j;
+            if (isEmpty) Console.WriteLine("Матрица пуста!");
+            else
+            {
+                Console.WriteLine("Получена матрица: ");
+                for (i = 0; i < strings; i++)
+                {
+                    for (j = 0; j < columns; j++)
+                    {
+                        Console.Write($"{table[i, j], 4}");
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
+        static int[,] AddStringInTable(int[,] table, int strings, int columns)
+        {
+            int[,] tableAfterAdded = new int[strings + 1, columns];
+            int newElement;
+            int i, j, k;
+            for (k = 0; k < columns; k++)
+            {
+                newElement = GetInt("Введите " + (k + 1) + "-й элемент новой строки: ", Int32.MinValue, Int32.MaxValue);
+                tableAfterAdded[0, k] = newElement;
+            }
+            for (i = 0; i < strings; i++)
+            {
+                for (j = 0; j < columns; j++)
+                {
+                    tableAfterAdded[i + 1, j] = table[i, j];
+                }
+            }
+            table = tableAfterAdded;
+            return table;
+        }
+        static void DoMenuForTable()
+        {
+            int check;
+            int strings = 0, columns = 0;
+            int[,] table = null;
+            do
+            {
+                PrintMenuForTable();
+                check = GetInt("", 1, 4);
+                switch (check)
+                {
+                    case 1:
+                        {
+                            strings = GetInt("Введите количество строк в матрице: ", 0, 10);
+                            columns = GetInt("Введите количество столбцов в матрице: ", 0, 10);
+                            if (strings == 0 || columns == 0) Console.WriteLine("Матрица пуста!");
+                            else
+                            {
+                                PrintMenuForMakeArray();
+                                check = GetInt("", 1, 4);
+                                switch (check)
+                                {
+                                    case 1: table = MakeTableConsole(strings, columns); break;
+                                    case 2: table = MakeTableRandom(strings, columns); break;
+                                    case 3: break;
+                                }
+                            }
+                            break;
+                        }
+                    case 2: PrintTable(table, strings, columns); break;
+                    case 3: table = AddStringInTable(table, strings, columns); break;
+                }
+            } while (check < 4);
+        }
+        #endregion
+
+        #region Рваные массивы
+        static void PrintMenuForRaggedArray()
+        {
+            Console.WriteLine();
+            Console.WriteLine("1. Создать рваный массив");
+            Console.WriteLine("2. Напечатать рваный массив");
+            Console.WriteLine("3. Удалить К строк, начиная с номера N");
+            Console.WriteLine("4. Назад");
+            Console.WriteLine();
+        }
+        static int[][] MakeRaggedArrayConsole(int strings)
+        {
+            int[][] raggedArray = new int[strings][];
+            int columns;
+            int i, j;
+            for (i = 0; i < strings; i++)
+            {
+                columns = GetInt($"Введите количество элементов в {i + 1} строке рваного массива: ", 0, 10);
+                raggedArray[i] = new int[columns];
+                for (j = 0; j < columns; j++)
+                {
+                    raggedArray[i][j] = GetInt($"Введите элемент {i + 1} строки под номером {j + 1}: ", Int32.MinValue, Int32.MaxValue);
+                }
+            }
+            Console.WriteLine("Рваный массив успешно создан");
+            return raggedArray;
+        }
+        static int[][] MakeRaggedArrayRandom(int strings)
+        {
+            Random rnd = new Random();
+            int[][] raggedArray = new int[strings][];
+
+            int columns;
+            int i, j;
+            for (i = 0; i < strings; i++)
+            {
+                columns = rnd.Next(1, 10);
+                raggedArray[i] = new int[columns];
+                for (j = 0; j < columns; j++)
+                {
+                    raggedArray[i][j] = rnd.Next(-100, 100);
+                }
+            }
+            Console.WriteLine("Рваный массив успешно создан");
+            return raggedArray;
+        }
+        static bool IsEmpty(int[][] raggedArray)
+        {
+            if (raggedArray == null || raggedArray.Length == 0) return true;
+            else return false;
+        }
+        static void PrintRaggedArray(int[][] raggedArray, int strings)
+        {
+            bool isEmpty = IsEmpty(raggedArray);
+            int i, j;
+            if (isEmpty) Console.WriteLine("Массив пуст!");
+            else
+            {
+                Console.WriteLine("Получен равный массив: ");
+                for (i = 0; i < strings; i++)
+                {
+                    for (j = 0; j < raggedArray[i].Length; j++)
+                    {
+                        Console.Write($"{raggedArray[i][j],4}");
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
+        static int[][] DeleteStringsInRaggedArray(int[][] raggedArray, int strings)
+        {
+            bool isEmpty = IsEmpty(raggedArray);
+            if (isEmpty) Console.WriteLine("Массив пуст!");
+            else
+            {
+                int K = GetInt("Введите количство строк, которые нужно удалить: ", 0, strings);
+                int N = GetInt("Введите номер строки, с которой начнется удаление: ", 1, strings);
+                int i, j;
+                int[][] raggedArrayAfterDelete = new int[raggedArray.Length - K][];
+                if (K == 0) Console.WriteLine("Массив не изменился");
+                if (K + N > raggedArray.Length) Console.WriteLine("[Ошибка!] Попытка удалить больше строк, чем есть в массиве");
+                else
+                {
+                    for (i = 0; i < N; i++)
+                    {
+                        raggedArrayAfterDelete[i] = raggedArray[i];
+                    }
+                    for (j = N + K + 1; j < raggedArray.Length; j++)
+                    {
+                        raggedArrayAfterDelete[j] = raggedArray[j];
+                    }
+                }
+                raggedArray = raggedArrayAfterDelete;
+            }
+            return raggedArray;
+        }
+        static void DoMenuForRaggedArray()
+        {
+            int check;
+            int strings = 0;
+            int[][] raggedArray = null;
+            do
+            {
+                PrintMenuForRaggedArray();
+                check = GetInt("", 1, 4);
+                switch (check)
+                {
+                    case 1:
+                        {
+                            strings = GetInt("Введите количество строк в рваном массиве: ", 0, 10);
+                            if (strings == 0) Console.WriteLine("Массив пуст!");
+                            else
+                            {
+                                PrintMenuForMakeArray();
+                                check = GetInt("", 1, 4);
+                                switch (check)
+                                {
+                                    case 1: raggedArray = MakeRaggedArrayConsole(strings); break;
+                                    case 2: raggedArray = MakeRaggedArrayRandom(strings); break;
+                                    case 3: break;
+                                }
+                            }
+                            break;
+                        }
+                    case 2: PrintRaggedArray(raggedArray, strings); break;
+                    case 3: raggedArray = DeleteStringsInRaggedArray(raggedArray, strings); break;
+                }
+            } while (check < 4);
+        }
+        #endregion
+
+        static void DoMainMenu()
+        {
+            int check;
+            do
+            {
+                PrintMainMenu();
+                check = GetInt("", 1, 4);
+                switch (check)
+                {
+                    case 1: DoMenuForArray(); break;
+                    case 2: DoMenuForTable(); break;
+                    case 3: DoMenuForRaggedArray(); break;
+                }
+            } while (check < 4);
+        }
+        static void Main(string[] args)
+        {
+            DoMainMenu();
+        }
+    }
+}
