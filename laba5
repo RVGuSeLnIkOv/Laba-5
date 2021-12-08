@@ -11,22 +11,22 @@ namespace задание
         #region Общие функции
         static void PrintMainMenu()
         {
-            Console.WriteLine();
+            Console.WriteLine("---------------------------------");
             Console.WriteLine("1. Работа с одномерными массивами");
             Console.WriteLine("2. Работа с двумерными массивами");
             Console.WriteLine("3. Работа с рваными массивами");
             Console.WriteLine("4. Выход");
-            Console.WriteLine();
+            Console.WriteLine("---------------------------------");
         }
         static void PrintMenuForMakeArray()
         {
-            Console.WriteLine();
+            Console.WriteLine("------------------------");
             Console.WriteLine("1. Создать вручную");
             Console.WriteLine("2. Создать с помощью ДСЧ");
             Console.WriteLine("3. Назад");
-            Console.WriteLine();
+            Console.WriteLine("------------------------");
         }
-        static int GetInt(string msg, int min, int max)
+        static int GetInt(string msg, string msgError, int min, int max)
         {
             int number;
             bool isRead;
@@ -44,7 +44,7 @@ namespace задание
                 {
                     if (number < min || number > max)
                     {
-                        Console.WriteLine("[Ошибка!] Число не попадает в заданный диапазон");
+                        Console.WriteLine("[Ошибка!] " + msgError);
                         Console.WriteLine();
                         isRead = false;
                     }
@@ -57,12 +57,12 @@ namespace задание
         #region Одномерные массивы
         static void PrintMenuForArray()
         {
-            Console.WriteLine();
+            Console.WriteLine("-------------------------------------");
             Console.WriteLine("1. Создать массив");
             Console.WriteLine("2. Напечатать массив");
             Console.WriteLine("3. Удалить элемент с заданным номером");
             Console.WriteLine("4. Назад");
-            Console.WriteLine();
+            Console.WriteLine("-------------------------------------");
         }
         static int[] MakeArrayConsole(int sizeOfArray)
         {
@@ -70,7 +70,7 @@ namespace задание
             int i;
             for (i = 0; i < sizeOfArray; i++)
             {
-                array[i] = GetInt("Введите " + (i + 1) + "-й элемент массива: ", Int32.MinValue, Int32.MaxValue);
+                array[i] = GetInt("Введите " + (i + 1) + "-й элемент массива: ", "Слишком большое число", Int32.MinValue, Int32.MaxValue);
             }
             Console.WriteLine("Массив успешно создан");
             return array;
@@ -96,7 +96,7 @@ namespace задание
         {
             bool isEmpty = IsEmpty(array);
             int i;
-            if (isEmpty) Console.WriteLine("Массив пустой!");
+            if (isEmpty) Console.WriteLine("Массив пуст!");
             else
             {
                 Console.WriteLine("Получен массив: ");
@@ -111,7 +111,7 @@ namespace задание
         {
             int[] arrayAfterDelete = new int[array.Length - 1];
             bool isEmpty = IsEmpty(array);
-            if (isEmpty) Console.WriteLine("Массив пустой!");
+            if (isEmpty) Console.WriteLine("Массив пуст!");
             else
             {
                 try
@@ -137,17 +137,17 @@ namespace задание
             do
             {
                 PrintMenuForArray();
-                check = GetInt("", 1, 4);
+                check = GetInt("", "Такой функции не существует", 1, 4);
                 switch (check)
                 {
                     case 1:
                         {
-                            sizeOfArray = GetInt("Введите количество элементов массива: ", 0, 100);
+                            sizeOfArray = GetInt("Введите количество элементов массива: ", "Создание таких длинных массивов не предусмотрено", 0, 100);
                             if (sizeOfArray == 0) Console.WriteLine("Массив пустой!");
                             else
                             {
                                 PrintMenuForMakeArray();
-                                check = GetInt("", 1, 4);
+                                check = GetInt("", "Такой функции не существует", 1, 4);
                                 switch (check)
                                 {
                                     case 1: array = MakeArrayConsole(sizeOfArray); break;
@@ -161,10 +161,10 @@ namespace задание
                     case 3:
                         {
                             bool isEmpty = IsEmpty(array);
-                            if (isEmpty) Console.WriteLine("Массив пустой!");
+                            if (isEmpty) Console.WriteLine("Массив пуст!");
                             else
                             {
-                                numOfDelElement = GetInt("Введите номер элемента, который нужно удалить: ", 1, sizeOfArray);
+                                numOfDelElement = GetInt("Введите номер элемента, который нужно удалить: ", "Элемента с таким номером не существует", 1, sizeOfArray);
                                 array = DeleteElement(array, numOfDelElement - 1, sizeOfArray);
                             }
                             break;
@@ -178,14 +178,14 @@ namespace задание
         #region Двумерные массивы
         static void PrintMenuForTable()
         {
-            Console.WriteLine();
+            Console.WriteLine("-----------------------------------");
             Console.WriteLine("1. Создать матрицу");
             Console.WriteLine("2. Напечатать матрицу");
             Console.WriteLine("3. Добавить строку в начало матрицы");
             Console.WriteLine("4. Назад");
-            Console.WriteLine();
+            Console.WriteLine("-----------------------------------");
         }
-        static int[,] MakeTableConsole(int strings, int columns)
+        static int[,] MakeTableConsole(ref int strings, ref int columns)
         {
             int[,] table = new int[strings, columns];
             int i, j;
@@ -193,13 +193,13 @@ namespace задание
             {
                 for (j = 0; j < columns; j++)
                 {
-                    table[i, j] = GetInt("Введите элемент матрицы с индексом [" + (i + 1) + "," + (j + 1) + "]: ", Int32.MinValue, Int32.MaxValue);
+                    table[i, j] = GetInt("Введите элемент матрицы с индексом [" + (i + 1) + "," + (j + 1) + "]: ", "Слишком большое число", Int32.MinValue, Int32.MaxValue);
                 }
             }
             Console.WriteLine("Матрица успешно создана");
             return table;
         }
-        static int[,] MakeTableRandom(int strings, int columns)
+        static int[,] MakeTableRandom(ref int strings, ref int columns)
         {
             Random rnd = new Random();
             int[,] table = new int[strings, columns];
@@ -214,15 +214,15 @@ namespace задание
             Console.WriteLine("Матрица успешно создана");
             return table;
         }
-        static bool IsEmpty(int[,] table)
+        static bool IsEmpty(ref int[,] table)
         {
             if (table == null || table.Length == 0) return true;
             else return false;
         }
-        static void PrintTable(int[,] table, int strings, int columns)
+        static void PrintTable(ref int[,] table, ref int strings, ref int columns)
         {
-            bool isEmpty = IsEmpty(table);
             int i, j;
+            bool isEmpty = IsEmpty(ref table);
             if (isEmpty) Console.WriteLine("Матрица пуста!");
             else
             {
@@ -231,63 +231,88 @@ namespace задание
                 {
                     for (j = 0; j < columns; j++)
                     {
-                        Console.Write($"{table[i, j], 4}");
+                        Console.Write($"{table[i, j],4}");
                     }
                     Console.WriteLine();
                 }
             }
         }
-        static int[,] AddStringInTable(int[,] table, int strings, int columns)
+        static int[,] AddStringInTable(ref int[,] table, ref int strings, ref int columns)
         {
             int[,] tableAfterAdded = new int[strings + 1, columns];
             int newElement;
             int i, j, k;
-            for (k = 0; k < columns; k++)
+            bool isEmpty = IsEmpty(ref table);
+            if (isEmpty)
             {
-                newElement = GetInt("Введите " + (k + 1) + "-й элемент новой строки: ", Int32.MinValue, Int32.MaxValue);
-                tableAfterAdded[0, k] = newElement;
-            }
-            for (i = 0; i < strings; i++)
-            {
-                for (j = 0; j < columns; j++)
+                strings = 1;
+                columns = GetInt("Введите размер новой строки: ", "Создание массива такой длины не предусмотрено", 1, 10);
+                int[,] emptyTableAfterAdded = new int[strings, columns];
+                for (i = 0; i < strings; i++)
                 {
-                    tableAfterAdded[i + 1, j] = table[i, j];
+                    for (j = 0; j < columns; j++)
+                    {
+                        newElement = GetInt("Введите " + (j + 1) + "-й элемент новой строки: ", "Слишком большое число", Int32.MinValue, Int32.MaxValue);
+                        emptyTableAfterAdded[i, j] = newElement;
+                    }
                 }
+                tableAfterAdded = emptyTableAfterAdded;
+            }
+            else
+            {
+                for (k = 0; k < columns; k++)
+                {
+                    newElement = GetInt("Введите " + (k + 1) + "-й элемент новой строки: ", "Слишком большое число", Int32.MinValue, Int32.MaxValue);
+                    tableAfterAdded[0, k] = newElement;
+                }
+                for (i = 0; i < strings; i++)
+                {
+                    for (j = 0; j < columns; j++)
+                    {
+                        tableAfterAdded[i + 1, j] = table[i, j];
+                    }
+                }
+                strings += 1;
             }
             table = tableAfterAdded;
+            Console.WriteLine("Новая строка успешно добавлена");
             return table;
+
         }
         static void DoMenuForTable()
         {
             int check;
             int strings = 0, columns = 0;
+            ref int stringsRef = ref strings;
+            ref int columnsRef = ref columns;
             int[,] table = null;
+            ref int[,] tableRef = ref table;
             do
             {
                 PrintMenuForTable();
-                check = GetInt("", 1, 4);
+                check = GetInt("", "Такой функции не существует", 1, 4);
                 switch (check)
                 {
                     case 1:
                         {
-                            strings = GetInt("Введите количество строк в матрице: ", 0, 10);
-                            columns = GetInt("Введите количество столбцов в матрице: ", 0, 10);
+                            strings = GetInt("Введите количество строк в матрице: ", "Создание массива такой длины не предусмотрено", 0, 10);
+                            columns = GetInt("Введите количество столбцов в матрице: ", "Создание массива такой длины не предусмотрено", 0, 10);
                             if (strings == 0 || columns == 0) Console.WriteLine("Матрица пуста!");
                             else
                             {
                                 PrintMenuForMakeArray();
-                                check = GetInt("", 1, 4);
+                                check = GetInt("", "Такой функции не существует", 1, 4);
                                 switch (check)
                                 {
-                                    case 1: table = MakeTableConsole(strings, columns); break;
-                                    case 2: table = MakeTableRandom(strings, columns); break;
+                                    case 1: table = MakeTableConsole(ref strings, ref columns); break;
+                                    case 2: table = MakeTableRandom(ref strings, ref columns); break;
                                     case 3: break;
                                 }
                             }
                             break;
                         }
-                    case 2: PrintTable(table, strings, columns); break;
-                    case 3: table = AddStringInTable(table, strings, columns); break;
+                    case 2: PrintTable(ref table, ref strings, ref columns); break;
+                    case 3: table = AddStringInTable(ref table, ref strings, ref columns); break;
                 }
             } while (check < 4);
         }
@@ -296,31 +321,31 @@ namespace задание
         #region Рваные массивы
         static void PrintMenuForRaggedArray()
         {
-            Console.WriteLine();
+            Console.WriteLine("--------------------------------------");
             Console.WriteLine("1. Создать рваный массив");
             Console.WriteLine("2. Напечатать рваный массив");
             Console.WriteLine("3. Удалить К строк, начиная с номера N");
             Console.WriteLine("4. Назад");
-            Console.WriteLine();
+            Console.WriteLine("--------------------------------------");
         }
-        static int[][] MakeRaggedArrayConsole(int strings)
+        static int[][] MakeRaggedArrayConsole(ref int strings)
         {
             int[][] raggedArray = new int[strings][];
             int columns;
             int i, j;
             for (i = 0; i < strings; i++)
             {
-                columns = GetInt($"Введите количество элементов в {i + 1} строке рваного массива: ", 0, 10);
+                columns = GetInt($"Введите количество элементов в {i + 1} строке рваного массива: ", "Создание массива такой длины не предусмотрено", 0, 10);
                 raggedArray[i] = new int[columns];
                 for (j = 0; j < columns; j++)
                 {
-                    raggedArray[i][j] = GetInt($"Введите элемент {i + 1} строки под номером {j + 1}: ", Int32.MinValue, Int32.MaxValue);
+                    raggedArray[i][j] = GetInt($"Введите элемент {i + 1} строки под номером {j + 1}: ", "Слишком большое число", Int32.MinValue, Int32.MaxValue);
                 }
             }
             Console.WriteLine("Рваный массив успешно создан");
             return raggedArray;
         }
-        static int[][] MakeRaggedArrayRandom(int strings)
+        static int[][] MakeRaggedArrayRandom(ref int strings)
         {
             Random rnd = new Random();
             int[][] raggedArray = new int[strings][];
@@ -339,19 +364,19 @@ namespace задание
             Console.WriteLine("Рваный массив успешно создан");
             return raggedArray;
         }
-        static bool IsEmpty(int[][] raggedArray)
+        static bool IsEmpty(ref int[][] raggedArray)
         {
             if (raggedArray == null || raggedArray.Length == 0) return true;
             else return false;
         }
-        static void PrintRaggedArray(int[][] raggedArray, int strings)
+        static void PrintRaggedArray(ref int[][] raggedArray, ref int strings)
         {
-            bool isEmpty = IsEmpty(raggedArray);
+            bool isEmpty = IsEmpty(ref raggedArray);
             int i, j;
             if (isEmpty) Console.WriteLine("Массив пуст!");
             else
             {
-                Console.WriteLine("Получен равный массив: ");
+                Console.WriteLine("Получен рваный массив: ");
                 for (i = 0; i < strings; i++)
                 {
                     for (j = 0; j < raggedArray[i].Length; j++)
@@ -362,30 +387,37 @@ namespace задание
                 }
             }
         }
-        static int[][] DeleteStringsInRaggedArray(int[][] raggedArray, int strings)
+        static int[][] DeleteStringsInRaggedArray(ref int[][] raggedArray, ref int strings)
         {
-            bool isEmpty = IsEmpty(raggedArray);
+            bool isEmpty = IsEmpty(ref raggedArray);
+            int numberOfString = 0;
             if (isEmpty) Console.WriteLine("Массив пуст!");
             else
             {
-                int K = GetInt("Введите количство строк, которые нужно удалить: ", 0, strings);
-                int N = GetInt("Введите номер строки, с которой начнется удаление: ", 1, strings);
+                int K = GetInt("Введите количство строк, которые нужно удалить: ", "Количество удаляемых строк больше, чем количество строк в массиве", 0, strings);
+                int N = GetInt("Введите номер строки, с которой начнется удаление: ", "Выход за границы массива", 1, strings);
                 int i, j;
-                int[][] raggedArrayAfterDelete = new int[raggedArray.Length - K][];
+                int[][] raggedArrayAfterDelete = new int[strings - K][];
                 if (K == 0) Console.WriteLine("Массив не изменился");
-                if (K + N > raggedArray.Length) Console.WriteLine("[Ошибка!] Попытка удалить больше строк, чем есть в массиве");
+                else if (K + N - 1 > strings) Console.WriteLine("[Ошибка!] Попытка удалить больше строк, чем есть в массиве");
                 else
                 {
-                    for (i = 0; i < N; i++)
+                    for (i = 0; i < strings; i++)
                     {
-                        raggedArrayAfterDelete[i] = raggedArray[i];
+                        if (i < (N - 1) || i > (N + K - 2))
+                        {
+                            raggedArrayAfterDelete[numberOfString] = new int[raggedArray[i].Length];
+                            for (j = 0; j < raggedArray[i].Length; j++)
+                            {
+                                raggedArrayAfterDelete[numberOfString][j] = raggedArray[i][j];
+                            }
+                            numberOfString += 1;
+                        }
                     }
-                    for (j = N + K + 1; j < raggedArray.Length; j++)
-                    {
-                        raggedArrayAfterDelete[j] = raggedArray[j];
-                    }
+                    raggedArray = raggedArrayAfterDelete;
+                    strings -= K;
+                    Console.WriteLine("Строки(а) успешно удалены(а)");
                 }
-                raggedArray = raggedArrayAfterDelete;
             }
             return raggedArray;
         }
@@ -393,32 +425,34 @@ namespace задание
         {
             int check;
             int strings = 0;
+            ref int stringsRef = ref strings;
             int[][] raggedArray = null;
+            ref int[][] raggedArrayRef = ref raggedArray;
             do
             {
                 PrintMenuForRaggedArray();
-                check = GetInt("", 1, 4);
+                check = GetInt("", "Такой функции не существует", 1, 4);
                 switch (check)
                 {
                     case 1:
                         {
-                            strings = GetInt("Введите количество строк в рваном массиве: ", 0, 10);
+                            strings = GetInt("Введите количество строк в рваном массиве: ", "Создание массива такой длины не предусмотрено", 0, 10);
                             if (strings == 0) Console.WriteLine("Массив пуст!");
                             else
                             {
                                 PrintMenuForMakeArray();
-                                check = GetInt("", 1, 4);
+                                check = GetInt("", "Такой функции не существует", 1, 4);
                                 switch (check)
                                 {
-                                    case 1: raggedArray = MakeRaggedArrayConsole(strings); break;
-                                    case 2: raggedArray = MakeRaggedArrayRandom(strings); break;
+                                    case 1: raggedArray = MakeRaggedArrayConsole(ref strings); break;
+                                    case 2: raggedArray = MakeRaggedArrayRandom(ref strings); break;
                                     case 3: break;
                                 }
                             }
                             break;
                         }
-                    case 2: PrintRaggedArray(raggedArray, strings); break;
-                    case 3: raggedArray = DeleteStringsInRaggedArray(raggedArray, strings); break;
+                    case 2: PrintRaggedArray(ref raggedArray, ref strings); break;
+                    case 3: raggedArray = DeleteStringsInRaggedArray(ref raggedArray, ref strings); break;
                 }
             } while (check < 4);
         }
@@ -430,7 +464,7 @@ namespace задание
             do
             {
                 PrintMainMenu();
-                check = GetInt("", 1, 4);
+                check = GetInt("", "Такой функции не существует", 1, 4);
                 switch (check)
                 {
                     case 1: DoMenuForArray(); break;
