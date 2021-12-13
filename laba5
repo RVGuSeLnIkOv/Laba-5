@@ -11,12 +11,14 @@ namespace задание
         #region Общие функции
         static void PrintMainMenu()
         {
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("---------------------------------");
             Console.WriteLine("1. Работа с одномерными массивами");
             Console.WriteLine("2. Работа с двумерными массивами");
             Console.WriteLine("3. Работа с рваными массивами");
             Console.WriteLine("4. Выход");
             Console.WriteLine("---------------------------------");
+            Console.ResetColor();
         }
         static void PrintMenuForMakeArray()
         {
@@ -36,17 +38,21 @@ namespace задание
                 isRead = int.TryParse(Console.ReadLine(), out number);
                 if (!isRead)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("[Ошибка!] Целое число введено неверно");
                     Console.WriteLine();
+                    Console.ResetColor();
                 }
 
                 else
                 {
                     if (number < min || number > max)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("[Ошибка!] " + msgError);
                         Console.WriteLine();
                         isRead = false;
+                        Console.ResetColor();
                     }
                 }
             } while (!isRead);
@@ -57,12 +63,14 @@ namespace задание
         #region Одномерные массивы
         static void PrintMenuForArray()
         {
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("-------------------------------------");
             Console.WriteLine("1. Создать массив");
             Console.WriteLine("2. Напечатать массив");
             Console.WriteLine("3. Удалить элемент с заданным номером");
             Console.WriteLine("4. Назад");
             Console.WriteLine("-------------------------------------");
+            Console.ResetColor();
         }
         static int[] MakeArrayConsole(int sizeOfArray)
         {
@@ -72,8 +80,11 @@ namespace задание
             {
                 array[i] = GetInt("Введите " + (i + 1) + "-й элемент массива: ", "Слишком большое число", Int32.MinValue, Int32.MaxValue);
             }
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Массив успешно создан");
+            Console.ResetColor();
             return array;
+
         }
         static int[] MakeArrayRandom(int sizeOfArray)
         {
@@ -84,7 +95,9 @@ namespace задание
             {
                 array[i] = rand.Next(-100, 100);
             }
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Массив успешно создан");
+            Console.ResetColor();
             return array;
         }
         static bool IsEmpty(int[] array)
@@ -96,7 +109,12 @@ namespace задание
         {
             bool isEmpty = IsEmpty(array);
             int i;
-            if (isEmpty) Console.WriteLine("Массив пуст!");
+            if (isEmpty)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Массив пуст!");
+                Console.ResetColor();
+            }
             else
             {
                 Console.WriteLine("Получен массив: ");
@@ -107,22 +125,31 @@ namespace задание
                 Console.WriteLine();
             }
         }
-        static int[] DeleteElement(int[] array, int numOfDelElement, int sizeOfArray)
+        static int[] DeleteElement(int[] array, int numOfDelElement)
         {
             int[] arrayAfterDelete = new int[array.Length - 1];
             bool isEmpty = IsEmpty(array);
-            if (isEmpty) Console.WriteLine("Массив пуст!");
+            if (isEmpty)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Массив пуст!");
+                Console.ResetColor();
+            }
             else
             {
                 try
                 {
                     Array.Copy(array, 0, arrayAfterDelete, 0, numOfDelElement);
                     Array.Copy(array, numOfDelElement + 1, arrayAfterDelete, numOfDelElement, array.Length - numOfDelElement - 1);
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"Элемент под номером {numOfDelElement + 1} успешно удален");
+                    Console.ResetColor();
                 }
                 catch (ArgumentException)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Элемента с таким номером нет");
+                    Console.ResetColor();
                 }
                 array = arrayAfterDelete;
             }
@@ -143,10 +170,17 @@ namespace задание
                     case 1:
                         {
                             sizeOfArray = GetInt("Введите количество элементов массива: ", "Создание таких длинных массивов не предусмотрено", 0, 100);
-                            if (sizeOfArray == 0) Console.WriteLine("Массив пустой!");
+                            if (sizeOfArray == 0) 
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Массив пуст!");
+                                Console.ResetColor();
+                            }
                             else
                             {
+                                Console.ForegroundColor = ConsoleColor.Magenta;
                                 PrintMenuForMakeArray();
+                                Console.ResetColor();
                                 check = GetInt("", "Такой функции не существует", 1, 4);
                                 switch (check)
                                 {
@@ -157,33 +191,45 @@ namespace задание
                             }
                             break;
                         }
-                    case 2: PrintArray(array); break;
+                    case 2:
+                        {
+                            Console.ForegroundColor = ConsoleColor.Magenta;
+                            PrintArray(array);
+                            Console.ResetColor();
+                            break;
+                        }
                     case 3:
                         {
                             bool isEmpty = IsEmpty(array);
-                            if (isEmpty) Console.WriteLine("Массив пуст!");
+                            if (isEmpty)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Массив пуст!");
+                                Console.ResetColor();
+                            }
                             else
                             {
                                 numOfDelElement = GetInt("Введите номер элемента, который нужно удалить: ", "Элемента с таким номером не существует", 1, sizeOfArray);
-                                array = DeleteElement(array, numOfDelElement - 1, sizeOfArray);
+                                array = DeleteElement(array, numOfDelElement - 1);
                             }
                             break;
                         }
                 }
             } while (check < 4);
-
         }
         #endregion
 
         #region Двумерные массивы
         static void PrintMenuForTable()
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("-----------------------------------");
             Console.WriteLine("1. Создать матрицу");
             Console.WriteLine("2. Напечатать матрицу");
             Console.WriteLine("3. Добавить строку в начало матрицы");
             Console.WriteLine("4. Назад");
             Console.WriteLine("-----------------------------------");
+            Console.ResetColor();
         }
         static int[,] MakeTableConsole(ref int strings, ref int columns)
         {
@@ -196,7 +242,9 @@ namespace задание
                     table[i, j] = GetInt("Введите элемент матрицы с индексом [" + (i + 1) + "," + (j + 1) + "]: ", "Слишком большое число", Int32.MinValue, Int32.MaxValue);
                 }
             }
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Матрица успешно создана");
+            Console.ResetColor();
             return table;
         }
         static int[,] MakeTableRandom(ref int strings, ref int columns)
@@ -211,7 +259,9 @@ namespace задание
                     table[i, j] = rnd.Next(-100, 100);
                 }
             }
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Матрица успешно создана");
+            Console.ResetColor();
             return table;
         }
         static bool IsEmpty(ref int[,] table)
@@ -223,7 +273,12 @@ namespace задание
         {
             int i, j;
             bool isEmpty = IsEmpty(ref table);
-            if (isEmpty) Console.WriteLine("Матрица пуста!");
+            if (isEmpty)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Матрица пуста!");
+                Console.ResetColor();
+            }
             else
             {
                 Console.WriteLine("Получена матрица: ");
@@ -275,7 +330,9 @@ namespace задание
                 strings += 1;
             }
             table = tableAfterAdded;
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Новая строка успешно добавлена");
+            Console.ResetColor();
             return table;
 
         }
@@ -297,10 +354,18 @@ namespace задание
                         {
                             strings = GetInt("Введите количество строк в матрице: ", "Создание массива такой длины не предусмотрено", 0, 10);
                             columns = GetInt("Введите количество столбцов в матрице: ", "Создание массива такой длины не предусмотрено", 0, 10);
-                            if (strings == 0 || columns == 0) Console.WriteLine("Матрица пуста!");
+                            if (strings == 0 || columns == 0)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Матрица пуста!");
+                                Console.ResetColor();
+                            }
+
                             else
                             {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
                                 PrintMenuForMakeArray();
+                                Console.ResetColor();
                                 check = GetInt("", "Такой функции не существует", 1, 4);
                                 switch (check)
                                 {
@@ -311,7 +376,13 @@ namespace задание
                             }
                             break;
                         }
-                    case 2: PrintTable(ref table, ref strings, ref columns); break;
+                    case 2:
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            PrintTable(ref table, ref strings, ref columns);
+                            Console.ResetColor();
+                            break;
+                        }
                     case 3: table = AddStringInTable(ref table, ref strings, ref columns); break;
                 }
             } while (check < 4);
@@ -321,12 +392,14 @@ namespace задание
         #region Рваные массивы
         static void PrintMenuForRaggedArray()
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("1. Создать рваный массив");
             Console.WriteLine("2. Напечатать рваный массив");
             Console.WriteLine("3. Удалить К строк, начиная с номера N");
             Console.WriteLine("4. Назад");
             Console.WriteLine("--------------------------------------");
+            Console.ResetColor();
         }
         static int[][] MakeRaggedArrayConsole(ref int strings)
         {
@@ -342,7 +415,9 @@ namespace задание
                     raggedArray[i][j] = GetInt($"Введите элемент {i + 1} строки под номером {j + 1}: ", "Слишком большое число", Int32.MinValue, Int32.MaxValue);
                 }
             }
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Рваный массив успешно создан");
+            Console.ResetColor();
             return raggedArray;
         }
         static int[][] MakeRaggedArrayRandom(ref int strings)
@@ -361,7 +436,9 @@ namespace задание
                     raggedArray[i][j] = rnd.Next(-100, 100);
                 }
             }
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Рваный массив успешно создан");
+            Console.ResetColor();
             return raggedArray;
         }
         static bool IsEmpty(ref int[][] raggedArray)
@@ -373,7 +450,12 @@ namespace задание
         {
             bool isEmpty = IsEmpty(ref raggedArray);
             int i, j;
-            if (isEmpty) Console.WriteLine("Массив пуст!");
+            if (isEmpty)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Массив пуст!");
+                Console.ResetColor();
+            }
             else
             {
                 Console.WriteLine("Получен рваный массив: ");
@@ -391,15 +473,30 @@ namespace задание
         {
             bool isEmpty = IsEmpty(ref raggedArray);
             int numberOfString = 0;
-            if (isEmpty) Console.WriteLine("Массив пуст!");
+            if (isEmpty)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Массив пуст!");
+                Console.ResetColor();
+            }
             else
             {
-                int K = GetInt("Введите количство строк, которые нужно удалить: ", "Количество удаляемых строк больше, чем количество строк в массиве", 0, strings);
+                int K = GetInt("Введите количство строк, которые нужно удалить: ", "Выход за границы массива", 0, strings);
                 int N = GetInt("Введите номер строки, с которой начнется удаление: ", "Выход за границы массива", 1, strings);
                 int i, j;
                 int[][] raggedArrayAfterDelete = new int[strings - K][];
-                if (K == 0) Console.WriteLine("Массив не изменился");
-                else if (K + N - 1 > strings) Console.WriteLine("[Ошибка!] Попытка удалить больше строк, чем есть в массиве");
+                if (K == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Массив не изменился");
+                    Console.ResetColor();
+                }
+                else if (K + N - 1 > strings)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("[Ошибка!] Попытка удалить больше строк, чем есть в массиве");
+                    Console.ResetColor();
+                }
                 else
                 {
                     for (i = 0; i < strings; i++)
@@ -416,7 +513,9 @@ namespace задание
                     }
                     raggedArray = raggedArrayAfterDelete;
                     strings -= K;
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Строки(а) успешно удалены(а)");
+                    Console.ResetColor();
                 }
             }
             return raggedArray;
@@ -437,10 +536,17 @@ namespace задание
                     case 1:
                         {
                             strings = GetInt("Введите количество строк в рваном массиве: ", "Создание массива такой длины не предусмотрено", 0, 10);
-                            if (strings == 0) Console.WriteLine("Массив пуст!");
+                            if (strings == 0)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Массив пуст!");
+                                Console.ResetColor();
+                            }
                             else
                             {
+                                Console.ForegroundColor = ConsoleColor.Cyan;
                                 PrintMenuForMakeArray();
+                                Console.ResetColor();
                                 check = GetInt("", "Такой функции не существует", 1, 4);
                                 switch (check)
                                 {
@@ -451,7 +557,13 @@ namespace задание
                             }
                             break;
                         }
-                    case 2: PrintRaggedArray(ref raggedArray, ref strings); break;
+                    case 2:
+                        {
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            PrintRaggedArray(ref raggedArray, ref strings);
+                            Console.ResetColor();
+                            break;
+                        }
                     case 3: raggedArray = DeleteStringsInRaggedArray(ref raggedArray, ref strings); break;
                 }
             } while (check < 4);
